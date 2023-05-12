@@ -71,7 +71,9 @@ const Button = styled(Link)`
     cursor:pointer;
 
     &.register-btn {
-        
+        &:hover {
+            text-decoration: underline;
+        }
     }
 
     &.login-btn {
@@ -79,5 +81,10 @@ const Button = styled(Link)`
         border-radius: 0.4rem;
         padding: 1rem;
         background-color: var(--primary-button-color);
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: var(--primary-button-hover-color);
+        }
     }
 `
