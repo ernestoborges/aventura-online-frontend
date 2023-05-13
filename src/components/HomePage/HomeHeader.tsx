@@ -1,14 +1,20 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components"
+import { getProfileData } from "../../features/profileData/profileDataSlice";
+import { useSelector } from "react-redux";
 
 const navigationItems = [
-    {name: "home", href:"#home"},
-    {name: "about", href:"#about"},
-    {name: "overview", href:"#overview"},
-    {name: "contact", href:"#contact"},
+    { name: "home", href: "#home" },
+    { name: "about", href: "#about" },
+    { name: "overview", href: "#overview" },
+    { name: "contact", href: "#contact" },
 ]
 
-export function HomeHeader(){
+export function HomeHeader() {
+
+    const profileData = useSelector(getProfileData);
+    // const profileData = false;
+
     return (
         <>
             <Header>
@@ -23,14 +29,25 @@ export function HomeHeader(){
                             ))
                         }
                     </Navigation>
-                    <LoginNavigation>
-                        <Button to="register" className="register-btn">
-                            Sign up
-                        </Button>
-                        <Button to="login" className="login-btn">
-                            Login
-                        </Button>
-                    </LoginNavigation>
+
+                    {
+                        profileData
+                            ? <ProfileDataContainer>
+                                <div>{profileData.username}</div>
+                                <Button to="/" className="logout-btn">
+                                    Sair
+                                </Button>
+                            </ProfileDataContainer>
+
+                            : <LoginNavigation>
+                                <Button to="register" className="register-btn">
+                                    Registrar
+                                </Button>
+                                <Button to="login" className="login-btn">
+                                    Entrar
+                                </Button>
+                            </LoginNavigation>
+                    }
                 </nav>
             </Header>
         </>
@@ -87,4 +104,7 @@ const Button = styled(Link)`
             background-color: var(--primary-button-hover-color);
         }
     }
+`
+const ProfileDataContainer = styled.div`
+
 `

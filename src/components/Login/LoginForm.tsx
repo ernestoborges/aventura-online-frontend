@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import { ContainerTemplate } from "./ContainerTemplate";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../features/profileData/profileDataSlice";
 
 
 interface LoginFormInputs {
@@ -14,9 +16,20 @@ export function LoginForm() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
-        axios.post("http://localhost:3000/login", data)
-            .then(response => console.log(response))
+        axios.post(
+            "http://localhost:3000/login",
+            data,
+            { withCredentials: true }
+        )
+            .then(async response => {
+                console.log(response)
+                dispatch(loginSuccess(response.data));
+                navigate("/");
+            })
             .catch(err => console.log(err));
     };
 
