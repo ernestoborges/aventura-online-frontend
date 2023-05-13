@@ -1,7 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../../app/store';
 
-const initialState = {
+
+interface ProfileState {
+    data: {
+        username: string
+        email: string
+    } | null
+    isLoggedIn: boolean
+}
+
+const initialState: ProfileState = {
     data: null,
     isLoggedIn: false,
 };
@@ -23,5 +32,6 @@ export const profileDataSlice = createSlice({
 
 export const { loginSuccess, logout } = profileDataSlice.actions;
 export const getProfileData = (state: RootState) => state.profileData.data;
+export const isLoggedIn = (state: RootState) => state.profileData.isLoggedIn;
 
 export default profileDataSlice.reducer;

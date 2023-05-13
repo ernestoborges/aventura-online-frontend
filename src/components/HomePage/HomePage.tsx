@@ -1,9 +1,13 @@
-import { HomeHeader } from "./HomeHeader";
+import { MainHeader } from "../MainHeader/MainHeader";
 
-export function HomePage(){
+export function HomePage() {
+
     return (
         <>
-            <HomeHeader />
+            <MainHeader />
+            <main>
+                Home text
+            </main>
         </>
     )
 }

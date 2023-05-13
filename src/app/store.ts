@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import profileDataReducer from '../features/profileData/profileDataSlice';
-// import counterReducer from '../features/counter/counterSlice';
 
 export const store = configureStore({
     reducer: {
