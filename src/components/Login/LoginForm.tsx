@@ -30,7 +30,7 @@ export function LoginForm() {
                 dispatch(loginSuccess(
                     {
                         ...response.data,
-                        avatar: response.data.avatar ? response.data.avatar : "/images/profile.png"
+                        avatar: response.data.avatar_url ? response.data.avatar_url : "/images/profile.png"
                     }
                 ));
                 navigate("/");
