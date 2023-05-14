@@ -21,7 +21,7 @@ export function LoginForm() {
 
     const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
         axios.post(
-            "http://localhost:3000/login",
+            `${import.meta.env.VITE_ENV_URL}/login`,
             data,
             { withCredentials: true }
         )
