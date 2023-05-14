@@ -3,6 +3,9 @@ import { ContainerTemplate } from "./ContainerTemplate";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Button, CustomLink, Footer, Header, Label } from "./LoginForm";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../features/profileData/profileDataSlice";
+import { useNavigate } from "react-router-dom";
 
 
 interface LoginFormInputs {
@@ -16,12 +19,23 @@ export function RegisterForm() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
-        
+
         axios.post("http://localhost:3000/register", data)
-        .then(response => console.log(response))
-        .catch(err => console.log(err));
-        
+            .then(response => {
+                dispatch(loginSuccess(
+                    {
+                        ...response.data,
+                        avatar: response.data.avatar ? response.data.avatar : "/images/profile.png"
+                    }
+                ));
+                navigate("/");
+            })
+            .catch(err => console.log(err));
+
     };
 
     return (

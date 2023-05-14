@@ -1,7 +1,7 @@
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom"
 import styled from "styled-components"
-import { getProfileData } from "../../../features/profileData/profileDataSlice";
+import { getProfileData, logout } from "../../../features/profileData/profileDataSlice";
 
 const menuMainList = [
     { order: 1, href: "/app/characters", name: "Meus personagens" },
@@ -10,7 +10,15 @@ const menuMainList = [
 
 export function MenuNavigation() {
 
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const profileData = useSelector(getProfileData);
+
+    function handleLogout() {
+        dispatch(logout());
+        navigate("/");
+    }
 
     return (
         <>
@@ -22,10 +30,13 @@ export function MenuNavigation() {
                             <span>Online</span>
                         </div>
                     </LogoContainer>
-                    <ProfileContainer>
+                    <ProfileContainer to="/app/account">
                         <AvatarContainer>
                             <div>
-                                <img src="/images/profile.png" alt={`Imagem de avatar de ${profileData?.username}`} />
+                                <img
+                                    src={ profileData?.avatar }
+                                    alt={`Imagem de avatar de ${profileData?.username}`}
+                                />
                             </div>
                         </AvatarContainer>
                         <span>
@@ -37,17 +48,19 @@ export function MenuNavigation() {
                     <ul>
                         {
                             menuMainList.map(item =>
-                                <li key={item.order}>
-                                    <ItemLink to={item.href}>
+                                <MenuItem key={item.order}>
+                                    <Link to={item.href}>
                                         {item.name}
-                                    </ItemLink>
-                                </li>
+                                    </Link>
+                                </MenuItem>
                             )
                         }
                     </ul>
                 </MainSection>
                 <Footer>
-
+                    <LogoffButton onClick={handleLogout}>
+                        Sair
+                    </LogoffButton>
                 </Footer>
             </Container>
         </>
@@ -74,6 +87,8 @@ const Header = styled.section`
 `
 
 const LogoContainer = styled(Link)`
+    cursor: pointer;
+
     & > div {
         display: flex;
         flex-direction: column;
@@ -81,10 +96,18 @@ const LogoContainer = styled(Link)`
     }
 `
 
-const ProfileContainer = styled.div`
+const ProfileContainer = styled(Link)`
     display: flex;
-        align-items: center;
-        gap: 1rem;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 0.8rem 1rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--medium-background-color);
+    }
 `
 
 const AvatarContainer = styled.div`
@@ -108,19 +131,42 @@ const AvatarContainer = styled.div`
 `
 
 const MainSection = styled.section`
-
+    flex-grow:  1;
     font-size: 1.4rem;
     & > ul {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 0;
     }
 `
 
-const ItemLink = styled(Link)`
-
+const MenuItem = styled.li`
+    cursor: pointer;
+    padding: 0.8rem 1rem;
+    border: 0;
+    border-radius: 0.4rem;
+    
+    &:hover {
+        background-color: var(--medium-background-color);
+    }
 `
 
 const Footer = styled.section`
+    display: flex;
+    justify-content: center;
+`
 
+const LogoffButton = styled.button`
+    cursor: pointer;
+    padding: 0.8rem 2rem;
+    background-color: var(--danger-button-color);
+    color: var(--text-color);
+    border: 0;
+    border-radius: 0.4rem;
+
+    transition: backgorund-color 0.3s;
+
+    &:hover {
+        background-color: var(--danger-button-hover-color);
+    }
 `

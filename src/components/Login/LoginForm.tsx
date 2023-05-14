@@ -27,7 +27,12 @@ export function LoginForm() {
         )
             .then(async response => {
                 console.log(response)
-                dispatch(loginSuccess(response.data));
+                dispatch(loginSuccess(
+                    {
+                        ...response.data,
+                        avatar: response.data.avatar ? response.data.avatar : "/images/profile.png"
+                    }
+                ));
                 navigate("/");
             })
             .catch(err => console.log(err));

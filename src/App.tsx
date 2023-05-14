@@ -7,6 +7,8 @@ import styled from "styled-components"
 import { CharactersSection } from "./components/Application/CharactersSection/CharactersSection"
 import { LandingPage } from "./components/LandingPage/LandingPage"
 import { CharacterCreationSection } from "./components/Application/CharacterCreationSection/CaracterCreationSection"
+import { UserConfigSection } from "./components/Application/UserConfigSection/UserConfigSection"
+import { MyAccount } from "./components/Application/UserConfigSection/MyAccount/MyAccount"
 
 export default function App() {
 
@@ -21,6 +23,9 @@ export default function App() {
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/app" element={<Application />}>
                 <Route path="/app/" element={<HomePage />} />
+                <Route path="account" element={<UserConfigSection />}>
+                    <Route path="/app/account/" element={<MyAccount />} />
+                </Route>
                 <Route path="characters" element={<CharactersSection />} />
                 <Route path="character-creation" element={<CharacterCreationSection />} />
               </Route>
