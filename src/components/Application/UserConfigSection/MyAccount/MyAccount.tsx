@@ -37,6 +37,7 @@ export function MyAccount() {
                         headers: {
                             "Content-Type": "application/json",
                         },
+                        withCredentials: true
                     });
 
                 const avatarUrl = response.data.avatar_url;

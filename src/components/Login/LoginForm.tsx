@@ -23,7 +23,12 @@ export function LoginForm() {
         axios.post(
             `${import.meta.env.VITE_BASE_URL}/login`,
             data,
-            { withCredentials: true }
+            {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
         )
             .then(async response => {
                 console.log(response)

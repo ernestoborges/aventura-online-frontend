@@ -24,7 +24,15 @@ export function RegisterForm() {
 
     const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
 
-        axios.post(`${import.meta.env.VITE_BASE_URL}/register`, data)
+        axios.post(`${import.meta.env.VITE_BASE_URL}/register`,
+            data,
+            {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        )
             .then(response => {
                 dispatch(loginSuccess(
                     {
