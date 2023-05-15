@@ -27,7 +27,7 @@ export function MyAccount() {
         reader.onloadend = async () => {
             try {
                 const response = await axios.post(
-                    `${import.meta.env.VITE_ENV_URL}/app/profile/upload-profile-image`,
+                    `${import.meta.env.VITE_BASE_URL}/app/profile/upload-profile-image`,
                     {
                         file: reader.result,
                         username: profileData?.username,
