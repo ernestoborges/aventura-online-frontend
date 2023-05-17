@@ -3,8 +3,6 @@ import { ContainerTemplate } from "./ContainerTemplate";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Button, CustomLink, Footer, Header, Label } from "./LoginForm";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { loginSuccess } from "../../features/profileData/profileDataSlice";
 import { useNavigate } from "react-router-dom";
 
 
@@ -19,7 +17,6 @@ export function RegisterForm() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
 
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
@@ -34,13 +31,9 @@ export function RegisterForm() {
             }
         )
             .then(response => {
-                dispatch(loginSuccess(
-                    {
-                        ...response.data,
-                        avatar: response.data.avatar_url ? response.data.avatar_url : "/images/profile.png"
-                    }
-                ));
-                navigate("/");
+                if(response.status === 201){
+                    navigate("/login");
+                }
             })
             .catch(err => console.log(err));
 

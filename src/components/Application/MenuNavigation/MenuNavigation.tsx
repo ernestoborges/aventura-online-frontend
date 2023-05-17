@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom"
 import styled from "styled-components"
-import { getProfileData, logout } from "../../../features/profileData/profileDataSlice";
+import { getProfileData } from "../../../features/profileDataSlice";
+import { logout } from "../../../features/authSlice";
 
 const menuMainList = [
     { order: 1, href: "/app/characters", name: "Meus personagens" },
@@ -34,7 +35,7 @@ export function MenuNavigation() {
                         <AvatarContainer>
                             <div>
                                 <img
-                                    src={ profileData?.avatar }
+                                    src={ profileData?.avatar_url }
                                     alt={`Imagem de avatar de ${profileData?.username}`}
                                 />
                             </div>

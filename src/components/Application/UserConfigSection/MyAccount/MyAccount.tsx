@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components"
-import { getProfileData, updateProfileImage } from "../../../../features/profileData/profileDataSlice";
+import { getProfileData, setProfileImage } from "../../../../features/profileDataSlice";
 import { useState } from "react";
 import axios from "axios";
 
@@ -41,7 +41,7 @@ export function MyAccount() {
                     });
 
                 const avatarUrl = response.data.avatar_url;
-                dispatch(updateProfileImage(avatarUrl));
+                dispatch(setProfileImage(avatarUrl));
 
             } catch (error) {
                 console.log("Erro ao fazer upload de imagem")
@@ -58,7 +58,7 @@ export function MyAccount() {
                 <AccountDetailSection>
                     <AvatarContainer>
                         <AvatarWrapper>
-                            <img src={profileData?.avatar} />
+                            <img src={profileData?.avatar_url} />
                         </AvatarWrapper>
 
                         <div>

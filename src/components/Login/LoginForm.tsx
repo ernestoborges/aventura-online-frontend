@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { loginSuccess } from "../../features/profileData/profileDataSlice";
+import { setAuth } from "../../features/authSlice";
 
 
 interface LoginFormInputs {
@@ -31,13 +31,8 @@ export function LoginForm() {
             }
         )
             .then(async response => {
-                console.log(response)
-                dispatch(loginSuccess(
-                    {
-                        ...response.data,
-                        avatar: response.data.avatar_url ? response.data.avatar_url : "/images/profile.png"
-                    }
-                ));
+                console.log(response);
+                dispatch(setAuth(response.data.accessToken));
                 navigate("/");
             })
             .catch(err => console.log(err));

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 import { useSelector } from "react-redux";
-import { getProfileData } from "../../features/profileData/profileDataSlice";
+import { getProfileData } from "../../features/profileDataSlice";
 
 export function MainHeader() {
 
