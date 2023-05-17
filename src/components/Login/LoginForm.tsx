@@ -3,9 +3,6 @@ import { ContainerTemplate } from "./ContainerTemplate";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setAuth } from "../../features/authSlice";
-
 
 interface LoginFormInputs {
     username: string;
@@ -16,7 +13,6 @@ export function LoginForm() {
 
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
 
-    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
@@ -31,8 +27,7 @@ export function LoginForm() {
             }
         )
             .then(async response => {
-                console.log(response);
-                dispatch(setAuth(response.data.accessToken));
+                localStorage.setItem("token", response.data.accessToken);
                 navigate("/");
             })
             .catch(err => console.log(err));

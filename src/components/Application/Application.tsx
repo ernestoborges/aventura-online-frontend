@@ -1,28 +1,40 @@
 import styled from "styled-components";
 import { MenuNavigation } from "./MenuNavigation/MenuNavigation";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { getAccessToken } from "../../features/authSlice";
+import { useDispatch } from "react-redux";
 import { setProfileData } from "../../features/profileDataSlice";
+import { useAxiosPrivate } from "../../hooks/useAxiosPrivate";
 
 export function Application() {
 
     const dispatch = useDispatch();
-    const accessToken = useSelector(getAccessToken);
+    const navigate = useNavigate();
+    const axiosPrivate = useAxiosPrivate();
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_BASE_URL}/user`, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-        })
-        .then(response => {
-            dispatch(setProfileData(response.data));
-            console.log(response.data);
-        })
-        .catch(err => console.log(err))
+        let isMounted = true;
+        const controller = new AbortController();
+
+        const getUsers = async () => {
+            try {
+                const response = await axiosPrivate.get('/user', {
+                    signal: controller.signal
+                });
+                console.log(response.data);
+                isMounted && dispatch(setProfileData(response.data));
+            } catch (err) {
+                console.error(err);
+                navigate('/login', { state: { from: location }, replace: true });
+            }
+        }
+
+        getUsers();
+
+        return () => {
+            isMounted = false;
+            controller.abort();
+        }
     }, [])
 
     return (
