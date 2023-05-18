@@ -20,7 +20,6 @@ export function LoginForm() {
             `${import.meta.env.VITE_BASE_URL}/login`,
             data,
             {
-                withCredentials: true,
                 headers: {
                     "Content-Type": "application/json",
                 },
