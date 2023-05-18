@@ -20,9 +20,7 @@ export function LoginForm() {
             `${import.meta.env.VITE_BASE_URL}/login`,
             data,
             {
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                withCredentials: true
             }
         )
             .then(async response => {
