@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { getProfileData, setProfileImage } from "../../../../features/profileDataSlice";
 import { useState } from "react";
 import axios from "axios";
+import { axiosPrivate } from "../../../../api/axios";
 
 export function MyAccount() {
 
@@ -25,25 +26,25 @@ export function MyAccount() {
         reader.readAsDataURL(selectedImage);
 
         reader.onloadend = async () => {
+            const controller = new AbortController();
             try {
-                const response = await axios.post(
-                    `${import.meta.env.VITE_BASE_URL}/app/profile/upload-profile-image`,
+                const response = await axiosPrivate.post('/upload-profile-image',
                     {
                         file: reader.result,
                         username: profileData?.username,
                         email: profileData?.email
                     },
                     {
+                        signal: controller.signal,
                         headers: {
                             "Content-Type": "application/json",
                         },
                         withCredentials: true
-                    });
-
+                    }
+                )
                 const avatarUrl = response.data.avatar_url;
                 dispatch(setProfileImage(avatarUrl));
-
-            } catch (error) {
+            } catch (err) {
                 console.log("Erro ao fazer upload de imagem")
             }
         };
