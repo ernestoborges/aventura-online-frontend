@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import { getProfileData } from "../../../features/profileDataSlice";
 import { logout } from "../../../features/authSlice";
+import { axiosPrivate } from "../../../api/axios";
 
 const menuMainList = [
     { order: 1, href: "/app/characters", name: "Meus personagens" },
@@ -16,9 +17,22 @@ export function MenuNavigation() {
 
     const profileData = useSelector(getProfileData);
 
-    function handleLogout() {
-        dispatch(logout());
-        navigate("/");
+    async function handleLogout() {
+        const controller = new AbortController();
+        try {
+            const response = await axiosPrivate.post('/logout', {
+                signal: controller.signal
+            });
+
+            if (response) {
+                dispatch(logout());
+                navigate("/");
+            }
+
+        } catch (err) {
+            console.error(err);
+            navigate('/login', { state: { from: location }, replace: true });
+        }
     }
 
     return (
@@ -35,7 +49,7 @@ export function MenuNavigation() {
                         <AvatarContainer>
                             <div>
                                 <img
-                                    src={ profileData?.avatar_url }
+                                    src={profileData?.avatar_url}
                                     alt={`Imagem de avatar de ${profileData?.username}`}
                                 />
                             </div>

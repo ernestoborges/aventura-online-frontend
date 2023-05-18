@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 import { useSelector } from "react-redux";
-import { getProfileData } from "../../features/profileDataSlice";
+import { isLoggedIn as isLoggedInState } from "../../features/authSlice";
 
 export function MainHeader() {
 
-    const profileData = useSelector(getProfileData);
+    const isLoggedIn = useSelector(isLoggedInState);
 
     return (
         <>
@@ -18,7 +18,7 @@ export function MainHeader() {
                         </div>
                     </Logo>
                     {
-                        !profileData &&
+                        !isLoggedIn &&
                         < LoginNavigation >
                             <Button to="/register" className="register-btn">
                                 Registrar
