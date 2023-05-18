@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components"
 import { getProfileData, setProfileImage } from "../../../../features/profileDataSlice";
 import { useState } from "react";
-import axios from "axios";
 import { axiosPrivate } from "../../../../api/axios";
 
 export function MyAccount() {
