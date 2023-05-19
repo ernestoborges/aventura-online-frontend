@@ -4,6 +4,8 @@ import styled from "styled-components"
 import { getProfileData } from "../../../features/profileDataSlice";
 import { logout } from "../../../features/authSlice";
 import { axiosPrivate } from "../../../api/axios";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const menuMainList = [
     { order: 1, href: "/app/characters", name: "Meus personagens" },
@@ -45,19 +47,27 @@ export function MenuNavigation() {
                             <span>Online</span>
                         </div>
                     </LogoContainer>
-                    <ProfileContainer to="/app/account">
-                        <AvatarContainer>
-                            <div>
-                                <img
-                                    src={profileData?.avatar_url}
-                                    alt={`Imagem de avatar de ${profileData?.username}`}
-                                />
-                            </div>
-                        </AvatarContainer>
-                        <span>
-                            {profileData?.username}
-                        </span>
-                    </ProfileContainer>
+                    {
+                        profileData
+                            ? <ProfileContainer to="/app/account">
+                                <AvatarContainer>
+                                    <div>
+                                        {
+                                            profileData?.avatar_url &&
+                                            < img
+                                                src={profileData.avatar_url}
+                                                alt={`Imagem de avatar de ${profileData.username}`}
+                                            />
+                                        }
+                                    </div>
+                                </AvatarContainer>
+                                <span>
+                                    {profileData?.username || <Skeleton />}
+                                </span>
+                            </ProfileContainer>
+                            : <ProfileContainerSkeleton />
+                    }
+
                 </Header>
                 <MainSection>
                     <ul>
@@ -126,17 +136,18 @@ const ProfileContainer = styled(Link)`
 `
 
 const AvatarContainer = styled.div`
-    
+
     & > div {
         border: 0.1rem solid white;
         border-radius: 50%;
-        background-color: white;
         overflow: hidden;
-
         width: 4rem;
         height: 4rem;
+        background-color: var(--medium-background-color);
+
 
         & > img{
+            background-color: white;
             border: 0;
             width: 100%;
             object-fit: contain;
@@ -183,5 +194,28 @@ const LogoffButton = styled.button`
 
     &:hover {
         background-color: var(--danger-button-hover-color);
+    }
+`
+
+
+export function ProfileContainerSkeleton() {
+    return (
+        <>
+            <ProfileContainerSkeletonWrapper>
+                <Skeleton circle width={40} height={40} />
+                <Skeleton height={16}/>
+            </ProfileContainerSkeletonWrapper>
+        </>
+    )
+}
+
+const ProfileContainerSkeletonWrapper = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+
+    & > *:nth-child(2){
+        flex-grow: 1;
     }
 `

@@ -21,7 +21,6 @@ export function Application() {
                 const response = await axiosPrivate.get('/user', {
                     signal: controller.signal
                 });
-                console.log(response.data);
                 isMounted && dispatch(setProfileData(response.data));
             } catch (err) {
                 console.error(err);

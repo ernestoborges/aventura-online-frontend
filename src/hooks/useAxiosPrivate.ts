@@ -9,7 +9,6 @@ export function useAxiosPrivate() {
 
     useEffect(() => {
 
-        console.log(`privateAxios: ${accessToken}`)
         const requestIntercept = axiosPrivate.interceptors.request.use(
             config => {
                 if (!config.headers['Authorization']) {
