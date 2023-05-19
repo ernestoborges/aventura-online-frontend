@@ -3,6 +3,8 @@ import { ContainerTemplate } from "./ContainerTemplate";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useState } from "react";
+import { PulseLoader } from "react-spinners";
 
 interface LoginFormInputs {
     username: string;
@@ -11,11 +13,16 @@ interface LoginFormInputs {
 
 export function LoginForm() {
 
-    const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
+    const { register, handleSubmit } = useForm<LoginFormInputs>();
 
     const navigate = useNavigate();
 
+    const [loginError, setLoginError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
     const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
+        setIsLoading(true);
+        setLoginError("");
         axios.post(
             `${import.meta.env.VITE_BASE_URL}/login`,
             data,
@@ -23,11 +30,22 @@ export function LoginForm() {
                 withCredentials: true
             }
         )
-            .then(async response => {
+            .then(response => {
+                setIsLoading(false);
+                return response
+            })
+            .then(response => {
                 localStorage.setItem("token", response.data.accessToken);
                 navigate("/");
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                setIsLoading(false);
+                console.log(err);
+                if(err.response.status === 401){
+                    setLoginError(err.response.data.message)
+                }
+            });
+
     };
 
     return (
@@ -41,21 +59,29 @@ export function LoginForm() {
                         <Label>
                             <div>
                                 <span>Usuário</span>
-                                <span>{errors.username && "Nome de usuário é obrigatório"}</span>
+                                <span>{loginError && "Login ou senha inválidos"}</span>
                             </div>
-                            <input type="username" {...register("username", { required: true })} />
+                            <input className={loginError && "input-error"} type="username" {...register("username", { required: true })} required />
                         </Label>
 
                         <Label>
                             <div>
                                 <span>Senha</span>
-                                <span>{errors.password && "Senha é obrigatória"}</span>
+                                <span>{loginError && "Login ou senha inválidos"}</span>
                             </div>
-                            <input type="password" {...register("password", { required: true })} />
+                            <input className={loginError && "input-error"} type="password" {...register("password", { required: true })} required />
                         </Label>
                     </InputSection>
-
-                    <Button type="submit">Entrar</Button>
+                    <Button type="submit">
+                        {
+                            isLoading
+                                ? <PulseLoader
+                                    size={5}
+                                    color="white"
+                                />
+                                : "Entrar"
+                        }
+                    </Button>
 
                     <Footer>
                         <p>Ainda não possui uma conta? <CustomLink to="/register">Crie uma</CustomLink></p>
@@ -114,6 +140,11 @@ export const Label = styled.label`
 
         color: var(--text-color);
         background-color: var(--dark-background-color);
+        border: 0.1rem solid transparent;
+
+        &.input-error {
+            border: 0.1rem solid var(--danger-button-color)
+        }
 
         &[type="date"]{
             cursor: text;
@@ -127,6 +158,8 @@ export const Label = styled.label`
 `
 
 export const Button = styled.button`
+
+    height: 3.5rem;
     cursor: pointer;
     padding: 1rem;
     border: 0;
@@ -135,6 +168,10 @@ export const Button = styled.button`
     font-weight: bold;
     background-color: var(--primary-button-color);
     transition: background-color 0.3s;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     &:hover {
         background-color: var(--primary-button-hover-color);
