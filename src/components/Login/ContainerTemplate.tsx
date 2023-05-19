@@ -31,11 +31,18 @@ const Container = styled.main`
 `
 
 const FormContainer = styled.section`
-    width: 100%;
-    max-width: 48rem;
-    padding: 2rem;
-    border-radius: 0.4rem;
-    background-color: var(--medium-background-color);
 
+    width: 100%;
+    height: 100%;
+    padding: 2rem;
+    background-color: var(--medium-background-color);
     transition: height 0.3s;
+
+    @media (min-width: 485px ){
+        height: auto;
+        max-width: 48rem;
+        border-radius: 0.4rem;
+    }
+
+    
 `
