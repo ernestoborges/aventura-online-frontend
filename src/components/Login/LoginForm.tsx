@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 import { PulseLoader } from "react-spinners";
+import { useDispatch } from "react-redux";
+import { setAuth } from "../../features/authSlice";
 
 interface LoginFormInputs {
     username: string;
@@ -16,6 +18,7 @@ export function LoginForm() {
     const { register, handleSubmit } = useForm<LoginFormInputs>();
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [loginError, setLoginError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +38,7 @@ export function LoginForm() {
                 return response
             })
             .then(response => {
-                localStorage.setItem("token", response.data.accessToken);
+                dispatch(setAuth(response.data.accessToken));
                 navigate("/");
             })
             .catch(err => {

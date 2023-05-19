@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 import { useDispatch } from 'react-redux';
-import { logout } from '../features/authSlice';
+import { logout, setAuth } from '../features/authSlice';
 
 export function useRefreshToken() {
 
@@ -13,7 +13,7 @@ export function useRefreshToken() {
             const response = await axios.get('/refresh-token', {
                 withCredentials: true
             });
-            localStorage.setItem("token", response.data.accessToken)
+            dispatch(setAuth(response.data.accessToken))
             return response.data.accessToken;
         } catch (err) {
             dispatch(logout());

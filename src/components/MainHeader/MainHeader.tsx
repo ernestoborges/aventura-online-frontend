@@ -1,11 +1,7 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components"
-import { useSelector } from "react-redux";
-import { isLoggedIn as isLoggedInState } from "../../features/authSlice";
 
 export function MainHeader() {
-
-    const isLoggedIn = useSelector(isLoggedInState);
 
     return (
         <>
@@ -18,7 +14,7 @@ export function MainHeader() {
                         </div>
                     </Logo>
                     {
-                        !isLoggedIn &&
+                        !localStorage.getItem("token") &&
                         < LoginNavigation >
                             <Button to="/register" className="register-btn">
                                 Registrar
