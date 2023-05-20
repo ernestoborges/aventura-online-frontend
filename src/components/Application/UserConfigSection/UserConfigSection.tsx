@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom"
 import styled from "styled-components"
-import { SubMenu } from "../Submenu/SubMenu"
+// import { SubMenu } from "../Submenu/SubMenu"
 import { SubMenuMobile } from "../Submenu/SubMenuMobile"
 
 const userConnfigList = [
