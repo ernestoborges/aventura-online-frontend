@@ -98,7 +98,7 @@ const Container = styled.nav`
     height: 100%;
     width: 100%;
     max-width: 24rem;
-    padding: 1rem 2rem;
+    padding: 1rem 1rem;
 
     display: flex;
     flex-direction: column;

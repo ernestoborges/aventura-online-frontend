@@ -1,16 +1,19 @@
 import styled from "styled-components";
 import { MenuNavigation } from "./MenuNavigation/MenuNavigation";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setProfileData } from "../../features/profileDataSlice";
 import { useAxiosPrivate } from "../../hooks/useAxiosPrivate";
+import { MobileMenuNavigation } from "./MenuNavigation/MobileMenuNavigation";
 
 export function Application() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const axiosPrivate = useAxiosPrivate();
+
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
     useEffect(() => {
         let isMounted = true;
@@ -36,10 +39,24 @@ export function Application() {
         }
     }, [])
 
+
+    useEffect(() => {
+        function handleResize() {
+            setWindowWidth(window.innerWidth);
+        }
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     return (
         <>
             <Container>
-                <MenuNavigation />
+
+                {
+                    windowWidth > 775
+                        ? <MenuNavigation />
+                        : <MobileMenuNavigation />
+                }
                 <AppContainer>
                     <Outlet />
                 </AppContainer>
@@ -52,8 +69,14 @@ export function Application() {
 const Container = styled.div`
     height: 100%;
     width: 100%;
+    position: relative;
 
     display: flex;
+    flex-direction: column-reverse;
+
+    @media (min-width: 775px){
+        flex-direction: row;
+    }
 `
 
 const AppContainer = styled.main`
