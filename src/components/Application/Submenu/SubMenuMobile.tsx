@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components"
 import ScrollContainer from 'react-indiana-drag-scroll'
+import { useState } from "react"
 
 interface Props {
     menuList: {
@@ -12,6 +13,8 @@ interface Props {
 
 export function SubMenuMobile({ menuList }: Props) {
 
+    const [selectedOption, setSelectedOption] = useState(1)
+
     return (
         <>
             <Container
@@ -20,7 +23,11 @@ export function SubMenuMobile({ menuList }: Props) {
                 <List>
                     {
                         menuList.map(item =>
-                            <li key={item.order}>
+                            <li
+                                key={item.order}
+                                className={selectedOption === item.order ? "selected-option" : ""}
+                                onClick={() => setSelectedOption(item.order)}
+                            >
                                 <Link to={item.href}>
                                     {item.name}
                                 </Link>
@@ -35,10 +42,7 @@ export function SubMenuMobile({ menuList }: Props) {
 
 const Container = styled(ScrollContainer)`
     background-color: var(--background-color);
-    padding: 1rem;
-
     width: 100%;
-    cursor: grab;
     user-select: none;
     overflow-x:hidden;
 `
@@ -51,5 +55,17 @@ const List = styled.ul`
 
     width: 100%;
     display: flex;
-    gap: 2rem;
+
+    & > li {
+        cursor: pointer;
+        padding: 1rem;
+        border: 0.1rem solid transparent;
+        color: var(--secondary-text-color);
+        transition: border 0.3s, color 0.3s;
+
+        &.selected-option {
+            color: var(--primary-text-color);
+            border-bottom: 0.1rem solid var(--primary-text-color);
+        }
+    }
 `

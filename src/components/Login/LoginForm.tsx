@@ -7,6 +7,7 @@ import { useState } from "react";
 import { PulseLoader } from "react-spinners";
 import { useDispatch } from "react-redux";
 import { setAuth } from "../../features/authSlice";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 
 interface LoginFormInputs {
     username: string;
@@ -22,6 +23,8 @@ export function LoginForm() {
 
     const [loginError, setLoginError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
         setIsLoading(true);
@@ -44,7 +47,7 @@ export function LoginForm() {
             .catch(err => {
                 setIsLoading(false);
                 console.log(err);
-                if(err.response.status === 401){
+                if (err.response.status === 401) {
                     setLoginError(err.response.data.message)
                 }
             });
@@ -67,12 +70,21 @@ export function LoginForm() {
                             <input className={loginError && "input-error"} type="username" {...register("username", { required: true })} required />
                         </Label>
 
-                        <Label>
+                        <Label className="password-label">
                             <div>
                                 <span>Senha</span>
                                 <span>{loginError && "Login ou senha inválidos"}</span>
                             </div>
-                            <input className={loginError && "input-error"} type="password" {...register("password", { required: true })} required />
+                            <div>
+                                <input className={loginError && "input-error"} type={showPassword ? "text" : "password"} {...register("password", { required: true })} required />
+                                <button type="button" onClick={() => setShowPassword(!showPassword)}>
+                                    {
+                                        showPassword
+                                            ? <AiOutlineEye />
+                                            : <AiOutlineEyeInvisible />
+                                    }
+                                </button>
+                            </div>
                         </Label>
                     </InputSection>
                     <Button type="submit">
@@ -118,7 +130,31 @@ export const Label = styled.label`
     flex-direction: column;
     gap: 0.4rem;
 
-    & > div {
+    &.password-label {
+        & div:last-child {
+            position: relative;
+            
+            & > button {
+                position: absolute;
+                right: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                
+                cursor: pointer;
+                font-weight: normal;
+                font-size: 2.2rem;
+                border: 0;
+                background-color: transparent;
+                color: var(--secondary-text-color);
+
+                display: flex;
+                align-items: center;
+            }
+        }
+        
+    }
+
+    & > div:first-child {
         width: 100%;
         display: flex;
         justify-content: space-between;
@@ -135,7 +171,7 @@ export const Label = styled.label`
         }
     }
 
-    & > input {
+    & input {
         width: 100%;
         border: 0;
         border-radius: 0.4rem;
