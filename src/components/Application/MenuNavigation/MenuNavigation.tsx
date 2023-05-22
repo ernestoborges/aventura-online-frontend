@@ -6,6 +6,7 @@ import { logout } from "../../../features/authSlice";
 import { axiosPrivate } from "../../../api/axios";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useState } from "react";
 
 const menuMainList = [
     { order: 1, href: "/app/characters", name: "Meus personagens" },
@@ -18,6 +19,8 @@ export function MenuNavigation() {
     const dispatch = useDispatch();
 
     const profileData = useSelector(getProfileData);
+
+    const [selectedOption, setSelectedOption] = useState(1);
 
     async function handleLogout() {
         const controller = new AbortController();
@@ -73,8 +76,11 @@ export function MenuNavigation() {
                     <ul>
                         {
                             menuMainList.map(item =>
-                                <MenuItem key={item.order}>
-                                    <Link to={item.href}>
+                                <MenuItem 
+                                    key={item.order}
+                                    className={selectedOption === item.order ? "selected-option" : ""}
+                                >
+                                    <Link to={item.href} onClick={()=> setSelectedOption(item.order)}>
                                         {item.name}
                                     </Link>
                                 </MenuItem>
@@ -159,6 +165,7 @@ const AvatarContainer = styled.div`
 const MainSection = styled.section`
     flex-grow:  1;
     font-size: 1.4rem;
+
     & > ul {
         display: flex;
         flex-direction: column;
@@ -167,13 +174,24 @@ const MainSection = styled.section`
 `
 
 const MenuItem = styled.li`
-    cursor: pointer;
-    padding: 0.8rem 1rem;
-    border: 0;
-    border-radius: 0.4rem;
-    
-    &:hover {
-        background-color: var(--medium-background-color);
+    color: var(--secondary-text-color);
+    transition: color 0.5s;
+
+    & > a {
+        display: flex;
+        cursor: pointer;
+        padding: 0.8rem 1rem;
+        border: 0;
+        border-radius: 0.4rem;
+
+        &:hover {
+            background-color: var(--medium-background-color);
+        }
+    }
+
+    &.selected-option {
+        color: var(--primary-text-color);
+        
     }
 `
 

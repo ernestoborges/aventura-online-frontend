@@ -96,6 +96,8 @@ const Container = styled.section`
 
 const AvatarContainer = styled.div`
     display: flex;
+    flex-direction: column;
+
     gap: 2rem;
 
     & > div {
@@ -104,6 +106,10 @@ const AvatarContainer = styled.div`
         justify-content: flex-start;
         align-items: flex-start;
         gap: 1rem;
+    }
+
+    @media (min-width: 775px) {
+        flex-direction: row;
     }
 `
 const AvatarWrapper = styled.div`
