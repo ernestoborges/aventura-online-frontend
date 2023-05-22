@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components"
+import ScrollContainer from 'react-indiana-drag-scroll'
 
 interface Props {
     menuList: {
@@ -14,27 +15,25 @@ export function SubMenuMobile({ menuList }: Props) {
     return (
         <>
             <Container
-               
+                vertical={false}
             >
-                    <List
-                       
-                    >
-                        {
-                            menuList.map(item =>
-                                <li key={item.order}>
-                                    <Link to={item.href}>
-                                        {item.name}
-                                    </Link>
-                                </li>
-                            )
-                        }
-                    </List>
-            </Container>
+                <List>
+                    {
+                        menuList.map(item =>
+                            <li key={item.order}>
+                                <Link to={item.href}>
+                                    {item.name}
+                                </Link>
+                            </li>
+                        )
+                    }
+                </List>
+            </Container >
         </>
     )
 }
 
-const Container = styled.div`
+const Container = styled(ScrollContainer)`
     background-color: var(--background-color);
     padding: 1rem;
 
