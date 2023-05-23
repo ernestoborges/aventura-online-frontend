@@ -9,6 +9,7 @@ import { LandingPage } from "./components/LandingPage/LandingPage"
 import { CharacterCreationSection } from "./components/Application/CharacterCreationSection/CaracterCreationSection"
 import { UserConfigSection } from "./components/Application/UserConfigSection/UserConfigSection"
 import { MyAccount } from "./components/Application/UserConfigSection/MyAccount/MyAccount"
+import { StandardMethod } from "./components/Application/CharacterCreationSection/StandardMethod/StandardMethod"
 
 export default function App() {
 
@@ -21,13 +22,20 @@ export default function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />
+
               <Route path="/app" element={<Application />}>
+
                 <Route path="/app/" element={<HomePage />} />
+
                 <Route path="account" element={<UserConfigSection />}>
-                    <Route path="/app/account/" element={<MyAccount />} />
+                  <Route path="/app/account/" element={<MyAccount />} />
                 </Route>
+
                 <Route path="characters" element={<CharactersSection />} />
-                <Route path="character-creation" element={<CharacterCreationSection />} />
+
+                <Route path="builder" element={<CharacterCreationSection />} />
+                <Route path="builder/standard" element={<StandardMethod />} />
+
               </Route>
             </Routes>
           </Router>

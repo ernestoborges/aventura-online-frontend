@@ -9,11 +9,12 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { RiHomeLine } from "react-icons/ri"
 import { BsFilePerson, BsGearFill } from "react-icons/bs"
 import { GiAnvil } from "react-icons/gi"
+import { useState } from "react";
 
 const menuMainList = [
     { order: 1, name: "inicio", icon: <RiHomeLine />, href: "/app", fontSize: 3 },
     { order: 2, name: "personagens", icon: <BsFilePerson />, href: "/app/characters", fontSize: 2.6 },
-    { order: 3, name: "criar", icon: <GiAnvil />, href: "/app/character-creation", fontSize: 3 },
+    { order: 3, name: "criar", icon: <GiAnvil />, href: "/app/builder", fontSize: 3 },
 ]
 
 export function MobileMenuNavigation() {
@@ -22,6 +23,8 @@ export function MobileMenuNavigation() {
     const dispatch = useDispatch();
 
     const profileData = useSelector(getProfileData);
+
+    const [selectedOption, setSelectedOption] = useState(1);
 
     async function handleLogout() {
         const controller = new AbortController();
@@ -66,8 +69,13 @@ export function MobileMenuNavigation() {
                                 <MenuItem
                                     key={item.order}
                                     style={{ fontSize: `${item.fontSize}rem` }}
+                                    className={selectedOption === item.order ? "selected-option " : ""}
                                 >
-                                    <Link className="named-icon" to={item.href}>
+                                    <Link
+                                        className="named-icon"
+                                        to={item.href}
+                                        onClick={() => setSelectedOption(item.order)}
+                                    >
                                         {item.icon}
                                         <span>{item.name}</span>
                                     </Link>
@@ -78,6 +86,8 @@ export function MobileMenuNavigation() {
                     <MenuSection>
                         <MenuItem
                             style={{ fontSize: `2.4rem` }}
+                            className={selectedOption === menuMainList.length + 1 ? "selected-option " : ""}
+                            onClick={() => setSelectedOption(menuMainList.length + 1)}
                         >
                             <div className="named-icon" >
                                 <BsGearFill />
@@ -105,7 +115,6 @@ const Container = styled.nav`
         height: 100%;
         display: flex;
         align-items: center;
-        gap: 2rem;
     }
 `
 
@@ -144,6 +153,7 @@ const AvatarContainer = styled.div`
 `
 
 const MenuSection = styled.section`
+    margin-left: 2rem;
     height: 100%;
     display: flex;
     gap: 1rem;
@@ -157,6 +167,11 @@ const MenuItem = styled.li`
     display: flex;
     flex-direction: column;
     padding: 0 0.6rem;
+    color: var(--secondary-text-color);
+
+    &.selected-option {
+        color: var(--primary-text-color);    
+    }
 
     & .named-icon {
         flex-grow: 1;

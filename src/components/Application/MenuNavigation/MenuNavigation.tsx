@@ -10,7 +10,7 @@ import { useState } from "react";
 
 const menuMainList = [
     { order: 1, href: "/app/characters", name: "Meus personagens" },
-    { order: 2, href: "/app/character-creation", name: "Criar novo personagem" },
+    { order: 2, href: "/app/builder", name: "Criar novo personagem" },
 ]
 
 export function MenuNavigation() {

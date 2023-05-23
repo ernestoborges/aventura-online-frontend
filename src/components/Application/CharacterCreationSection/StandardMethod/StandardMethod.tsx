@@ -1,18 +1,15 @@
 import styled from "styled-components"
 
-
-export function CharactersSection() {
-
+export function StandardMethod(){
     return (
         <>
             <Container>
-                a
+                Formularioo
             </Container>
         </>
     )
 }
 
-const Container = styled.section`
+const Container = styled.div`
 
 `
-
