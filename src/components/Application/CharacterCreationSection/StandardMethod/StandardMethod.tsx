@@ -1,18 +1,15 @@
-import { useState } from "react"
-import { SubmitHandler, useForm } from "react-hook-form";
 import ScrollContainer from "react-indiana-drag-scroll"
 import styled from "styled-components"
-import { HomeStep } from "./Steps/Home";
-import { RaceStep } from "./Steps/Race";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const formSteps = [
-    { order: 1, name: "inicio" },
-    { order: 2, name: "raça" },
-    { order: 3, name: "classe" },
-    { order: 4, name: "habilidades" },
-    { order: 5, name: "descrição" },
-    { order: 6, name: "equipamentos" },
-    { order: 7, name: "concluir" },
+    { order: 1, route: "/app/builder/standard/", name: "inicio" },
+    { order: 2, route: "/app/builder/standard/race", name: "raça" },
+    { order: 3, route: "/app/builder/standard/class", name: "classe" },
+    { order: 4, route: "/app/builder/standard/abilities", name: "habilidades" },
+    { order: 5, route: "/app/builder/standard/description", name: "descrição" },
+    { order: 6, route: "/app/builder/standard/equipment", name: "equipamentos" },
+    { order: 7, route: "/app/builder/standard/finish", name: "concluir" },
 ]
 
 export interface CreationFormInputs {
@@ -22,28 +19,12 @@ export interface CreationFormInputs {
 
 export function StandardMethod() {
 
-    const [currentStep, setCurrentStep] = useState<number>(1);
-    const { register, handleSubmit } = useForm<CreationFormInputs>();
+    const navigate = useNavigate();
 
-    const onSubmit: SubmitHandler<CreationFormInputs> = (data) => {
-        alert(data)
-    }
-
-    const handleNextStep = () => {
-        setCurrentStep(currentStep + 1);
-    };
-
-    const handlePreviousStep = () => {
-        if (currentStep > 1)
-            setCurrentStep(currentStep - 1);
-    };
-
-    const renderStep = () => {
-        switch (currentStep) {
-            case 1: return <HomeStep register={register} />
-            case 2: return <RaceStep register={register} />
-            default: break
-        }
+    const getLinkClassName = (path: string) => {
+        return (
+            "nav-link disabled " + (path === location.pathname ? "current-step" : undefined)
+        );
     }
 
     return (
@@ -57,7 +38,8 @@ export function StandardMethod() {
                                 formSteps.map(step =>
                                     <div
                                         key={step.order}
-                                        className={currentStep === step.order ? "current-step" : ""}
+                                        className={getLinkClassName(step.route)}
+                                        onClick={() => navigate(step.route)}
                                     >
                                         {
                                             step.name
@@ -69,28 +51,8 @@ export function StandardMethod() {
                     </nav>
                 </Header>
                 <FormSection>
-                    <CharacterForm onSubmit={handleSubmit(onSubmit)}>
-                        <FormWrapper>
-                            {renderStep()}
-                        </FormWrapper>
-                    </CharacterForm>
+                    <Outlet />
                 </FormSection>
-                <Footer>
-                    <StepNavButtons>
-                        <PreviousStep onClick={handlePreviousStep}>
-                            Anterior
-                        </PreviousStep>
-                        {
-                            currentStep < formSteps.length
-                                ? <StepButton onClick={handleNextStep} >
-                                    Próximo
-                                </StepButton>
-                                : <StepButton type="submit" >
-                                    Enviar
-                                </StepButton>
-                        }
-                    </StepNavButtons>
-                </Footer>
             </Container>
         </>
     )
@@ -143,29 +105,4 @@ const CharacterForm = styled.form`
 const FormWrapper = styled.div`
     width: 100%;
     max-width: 68rem;
-`
-
-const Footer = styled.footer`
-    display: flex;
-    justify-content: flex-end;
-    background-color: var(--background-color);
-    border-bottom: 0.1rem solid var(--secondary-text-color);
-`
-
-const StepNavButtons = styled.div`
-    cursor: pointer;
-    display: flex;
-    
-`
-
-const StepButton = styled.button`
-    border: 0;
-    padding: 1rem;
-    background-color: var(--background-color);
-    color: var(--primary-text-color)
-`
-
-const PreviousStep = styled(StepButton)`
-    border-left: 0.1rem solid var(--secondary-text-color);
-    border-right: 0.1rem solid var(--secondary-text-color);
 `

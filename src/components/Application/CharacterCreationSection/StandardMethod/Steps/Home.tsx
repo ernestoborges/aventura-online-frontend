@@ -1,16 +1,55 @@
-import { UseFormRegister } from "react-hook-form"
+import { SubmitHandler, useForm } from "react-hook-form"
 import styled from "styled-components"
-import { CreationFormInputs } from "../StandardMethod"
 import { useEffect, useState } from "react"
+import { INewCharacter, getNewCharacter, setNewCharacter } from "../../../../../features/newCharacter"
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
 
-interface Props {
-    register: UseFormRegister<CreationFormInputs>
-}
-
-export function HomeStep({ register }: Props) {
+export function HomeStep() {
 
     const [selectedFile, setSelectedFile] = useState<File | undefined>()
+    const [fileData, setFileData] = useState({
+        name: "",
+        size: 0,
+        type: ""
+    })
     const [avatarPreview, setAvatarPreview] = useState<string | undefined>()
+
+    const newCharacterData = useSelector(getNewCharacter);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const {
+        handleSubmit,
+        register,
+        formState: { errors },
+    } = useForm({ defaultValues: newCharacterData, mode: "onSubmit" });
+
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+
+        if (file) {
+            const maxFileSize = 5 * 1024 * 1024; // 5MB (bytes)
+            if (file.size > maxFileSize) {
+                return
+            }
+        }
+
+        const file_data = {
+            name: file ? file.name : "",
+            size: file ? file.size : 0,
+            type: file ? file.type : "",
+        }
+
+        setSelectedFile(file)
+        setFileData(file_data);
+    }
+
+    const onSubmit: SubmitHandler<INewCharacter> = (data) => {
+        dispatch(setNewCharacter({ ...newCharacterData, ...data, avatar_file: fileData }));
+        navigate("race");
+    }
 
     useEffect(() => {
         if (!selectedFile) {
@@ -24,51 +63,55 @@ export function HomeStep({ register }: Props) {
         return () => URL.revokeObjectURL(objectUrl)
     }, [selectedFile])
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0]
-        setSelectedFile(file)
-    }
-
-    const maxFileSize = 5 * 1024 * 1024; // 5MB (bytes)
 
     return (
         <>
-            <Container>
-                <AvatarLabel>
-                    <span>Avatar</span>
-                    <div>
-                        <img src={avatarPreview ? avatarPreview : "/images/profile.png"} />
-                        <input
-                            className="file-input"
-                            type="file"
-                            {...register("avatar_file", {
-                                required: true,
-                                validate: {
-                                    maxSize: (value: File) => value.size <= maxFileSize || "O tamanho do arquivo deve ser menor ou igual a 5MB."
-                                }
-                            })}
-                            onChange={handleFileChange}
-                            accept=".jpg, .jpeg, .png"
-                        />
-                    </div>
-                </AvatarLabel>
-                <Label>
-                    <div>
-                        <span>Nome do personagem</span>
-                    </div>
-                    <div>
-                        <input type="text" {...register("name", { required: true })} />
-                    </div>
-                </Label>
-            </Container>
+            <FormStepContainer>
+                <FormStep onSubmit={handleSubmit(onSubmit)}>
+                    <AvatarLabel>
+                        <div>
+                            <span>Avatar</span>
+                        </div>
+                        <div>
+                            <img src={avatarPreview ? avatarPreview : "/images/profile.png"} />
+                            <input
+                                className="file-input"
+                                type="file"
+                                onChange={handleFileChange}
+                                accept=".jpg, .jpeg, .png"
+                            />
+                        </div>
+                    </AvatarLabel>
+                    <Label>
+                        <div>
+                            <span>Nome do personagem</span>
+                            <span>{errors.name && "Campo obrigatório."}</span>
+                        </div>
+                        <div>
+                            <input type="text" {...register("name", { required: true })} />
+                        </div>
+                    </Label>
+                    <FormFooter>
+                        <FormStepNavButtons>
+                            <StepButton type="submit">
+                                Próximo
+                            </StepButton>
+                        </FormStepNavButtons>
+                    </FormFooter>
+                </FormStep>
+            </FormStepContainer>
         </>
     )
 }
 
-const Container = styled.section`
+export const FormStepContainer = styled.section`
     display: flex;
     flex-direction: column;
     gap: 2rem;
+`
+
+export const FormStep = styled.form`
+
 `
 
 const Label = styled.label`
@@ -110,4 +153,24 @@ const AvatarLabel = styled(Label)`
             flex-direction: column;
         }
     }
-`   
+`
+
+export const FormFooter = styled.footer`
+    display: flex;
+    justify-content: flex-end;
+    background-color: var(--background-color);
+    border-bottom: 0.1rem solid var(--secondary-text-color);
+`
+
+export const FormStepNavButtons = styled.div`
+    cursor: pointer;
+    display: flex;
+`
+
+export const StepButton = styled.button`
+    font-size: 1.2rem;
+    border: 0;
+    padding: 1rem;
+    background-color: var(--background-color);
+    color: var(--primary-text-color)
+`

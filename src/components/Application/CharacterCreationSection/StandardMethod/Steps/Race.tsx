@@ -1,23 +1,46 @@
 import styled from "styled-components"
-import { CreationFormInputs } from "../StandardMethod"
-import { UseFormRegister } from "react-hook-form"
+import { FormFooter, FormStep, FormStepContainer, FormStepNavButtons, StepButton } from "./Home"
+import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { getNewCharacter } from "../../../../../features/newCharacter";
+import { useSelector } from "react-redux";
 
-interface Props {
-    register: UseFormRegister<CreationFormInputs>
-}
 
-export function RaceStep({ register }: Props) {
+
+export function RaceStep() {
+    const newCharacterData = useSelector(getNewCharacter);
+
+    useEffect(() => {
+        console.log(newCharacterData)
+    }, [newCharacterData])
+
     return (
         <>
-            <Container>
-                Race
-            </Container>
+            <FormStepContainer>
+                <FormStep>
+                    {newCharacterData.name}
+                    <FormFooter>
+                        <FormStepNavButtons>
+                            <PreviousStep to="/app/builder/standard/">
+                                Anterior
+                            </PreviousStep>
+                            <StepButton>
+                                Próximo
+                            </StepButton>
+                        </FormStepNavButtons>
+                    </FormFooter>
+                </FormStep>
+            </FormStepContainer>
         </>
     )
 }
 
-const Container = styled.section`
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+
+
+const PreviousStep = styled(Link)`
+    font-size: 1.2rem;
+    border: 0;
+    padding: 1rem;
+    background-color: var(--background-color);
+    color: var(--primary-text-color)
 `

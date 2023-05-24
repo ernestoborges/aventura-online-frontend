@@ -10,6 +10,8 @@ import { CharacterCreationSection } from "./components/Application/CharacterCrea
 import { UserConfigSection } from "./components/Application/UserConfigSection/UserConfigSection"
 import { MyAccount } from "./components/Application/UserConfigSection/MyAccount/MyAccount"
 import { StandardMethod } from "./components/Application/CharacterCreationSection/StandardMethod/StandardMethod"
+import { HomeStep } from "./components/Application/CharacterCreationSection/StandardMethod/Steps/Home"
+import { RaceStep } from "./components/Application/CharacterCreationSection/StandardMethod/Steps/Race"
 
 export default function App() {
 
@@ -34,7 +36,10 @@ export default function App() {
                 <Route path="characters" element={<CharactersSection />} />
 
                 <Route path="builder" element={<CharacterCreationSection />} />
-                <Route path="builder/standard" element={<StandardMethod />} />
+                <Route path="builder/standard" element={<StandardMethod />} >
+                  <Route path="/app/builder/standard/" element={<HomeStep />} />
+                  <Route path="race" element={<RaceStep />} />
+                </Route>
 
               </Route>
             </Routes>
