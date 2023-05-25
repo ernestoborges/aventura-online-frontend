@@ -3,11 +3,7 @@ import { RootState } from '../app/store';
 
 
 export interface INewCharacter {
-    avatar_file: {
-        name: string
-        size: number
-        type: string
-    } | null
+    avatar_file: File | null
     name: string
     race: string
     characterClass: string
@@ -25,7 +21,7 @@ export const newCharacterSlice = createSlice({
     initialState,
     reducers: {
         setNewCharacter: (state, action) => {
-            
+
             return { ...state, ...action.payload };
         },
     },

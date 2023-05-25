@@ -38,7 +38,7 @@ export default function App() {
                 <Route path="builder" element={<CharacterCreationSection />} />
                 <Route path="builder/standard" element={<StandardMethod />} >
                   <Route path="/app/builder/standard/" element={<HomeStep />} />
-                  <Route path="race" element={<RaceStep />} />
+                  <Route path="/app/builder/standard/race" element={<RaceStep />} />
                 </Route>
 
               </Route>

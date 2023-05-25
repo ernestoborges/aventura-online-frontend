@@ -50,9 +50,8 @@ export function StandardMethod() {
                         </NavigationList>
                     </nav>
                 </Header>
-                <FormSection>
-                    <Outlet />
-                </FormSection>
+                <Outlet />
+                
             </Container>
         </>
     )
@@ -63,6 +62,10 @@ const Container = styled.div`
     height: 100%;
     display: flex;
     flex-direction: column;
+
+    @media (min-width: 776px) {
+        padding: 0;
+    }
 
 `
 
@@ -90,19 +93,9 @@ const NavigationList = styled(ScrollContainer)`
             border-bottom: 0.1rem solid var(--primary-text-color);
         }
     }
+
+    @media (min-width: 776px) {
+        justify-content: center;
+    }
 `
 
-const FormSection = styled.section`
-    flex-grow: 1;
-`
-
-const CharacterForm = styled.form`
-    padding: 1rem 1rem;
-    display: flex;
-    justify-content: center;
-`
-
-const FormWrapper = styled.div`
-    width: 100%;
-    max-width: 68rem;
-`

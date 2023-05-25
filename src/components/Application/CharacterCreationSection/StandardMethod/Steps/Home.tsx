@@ -7,17 +7,12 @@ import { useNavigate } from "react-router-dom"
 
 export function HomeStep() {
 
-    const [selectedFile, setSelectedFile] = useState<File | undefined>()
-    const [fileData, setFileData] = useState({
-        name: "",
-        size: 0,
-        type: ""
-    })
-    const [avatarPreview, setAvatarPreview] = useState<string | undefined>()
-
     const newCharacterData = useSelector(getNewCharacter);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    const [selectedFile, setSelectedFile] = useState<File | undefined>()
+    const [avatarPreview, setAvatarPreview] = useState<string | undefined>()
 
     const {
         handleSubmit,
@@ -36,18 +31,11 @@ export function HomeStep() {
             }
         }
 
-        const file_data = {
-            name: file ? file.name : "",
-            size: file ? file.size : 0,
-            type: file ? file.type : "",
-        }
-
-        setSelectedFile(file)
-        setFileData(file_data);
+        setSelectedFile(file);
     }
 
     const onSubmit: SubmitHandler<INewCharacter> = (data) => {
-        dispatch(setNewCharacter({ ...newCharacterData, ...data, avatar_file: fileData }));
+        dispatch(setNewCharacter({ ...newCharacterData, ...data, avatar_file: selectedFile }));
         navigate("race");
     }
 
@@ -63,34 +51,42 @@ export function HomeStep() {
         return () => URL.revokeObjectURL(objectUrl)
     }, [selectedFile])
 
+    useEffect(() => {
+        if (newCharacterData.avatar_file)
+            setSelectedFile(newCharacterData.avatar_file)
+    }, [])
 
     return (
         <>
-            <FormStepContainer>
-                <FormStep onSubmit={handleSubmit(onSubmit)}>
-                    <AvatarLabel>
-                        <div>
-                            <span>Avatar</span>
-                        </div>
-                        <div>
-                            <img src={avatarPreview ? avatarPreview : "/images/profile.png"} />
-                            <input
-                                className="file-input"
-                                type="file"
-                                onChange={handleFileChange}
-                                accept=".jpg, .jpeg, .png"
-                            />
-                        </div>
-                    </AvatarLabel>
-                    <Label>
-                        <div>
-                            <span>Nome do personagem</span>
-                            <span>{errors.name && "Campo obrigatório."}</span>
-                        </div>
-                        <div>
-                            <input type="text" {...register("name", { required: true })} />
-                        </div>
-                    </Label>
+            <FormSection>
+                <CustomForm onSubmit={handleSubmit(onSubmit)}>
+                    <FormFieldSet>
+                        <AvatarLabel>
+                            <div>
+                                <span>Avatar</span>
+                            </div>
+                            <label>
+                                <img src={avatarPreview ? avatarPreview : "/images/profile.png"} />
+                                <input
+                                    className="file-input"
+                                    type="file"
+                                    accept=".jpg, .jpeg, .png"
+                                    {...register("avatar_file")}
+                                    onChange={handleFileChange}
+                                />
+                            </label>
+                        </AvatarLabel>
+                        <Label>
+                            <div>
+                                <span>Nome do personagem</span>
+                                <span>{errors.name && "Campo obrigatório."}</span>
+                            </div>
+                            <div>
+                                <input type="text" {...register("name", { required: true })} />
+                            </div>
+                        </Label>
+
+                    </FormFieldSet>
                     <FormFooter>
                         <FormStepNavButtons>
                             <StepButton type="submit">
@@ -98,20 +94,40 @@ export function HomeStep() {
                             </StepButton>
                         </FormStepNavButtons>
                     </FormFooter>
-                </FormStep>
-            </FormStepContainer>
+                </CustomForm>
+            </FormSection>
+
         </>
     )
 }
 
-export const FormStepContainer = styled.section`
+export const FormSection = styled.section`
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
+
+export const CustomForm = styled.form`
+    position: relative;
+    flex-grow: 1;
+    padding: 1rem 1rem;
+    width: 100%;
+
     display: flex;
     flex-direction: column;
     gap: 2rem;
+
+    @media (min-width: 776px) {
+        max-width: 68rem;
+    }
 `
 
-export const FormStep = styled.form`
-
+export const FormFieldSet = styled.fieldset`
+    all: unset;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 `
 
 const Label = styled.label`
@@ -134,28 +150,50 @@ const Label = styled.label`
 
 `
 
-const AvatarLabel = styled(Label)`
+const AvatarLabel = styled.div`
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 1rem;
+
+    color: var(--secondary-text-color);
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.4rem;
+    
     & > div {
         display: flex;
         align-items: center;
         gap: 1rem;
+    }
 
+    & > label {        
         & > img {
             width: 10rem;
             height: 10rem;
+            object-fit: cover;
         }
 
         & > input {
             display: flex;
             flex-direction: column;
+
+        
+            opacity: 0;
+            -moz-opacity: 0;
+            filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0)
+            z-index: -1;
+            position: absolute;
         }
     }
 `
 
 export const FormFooter = styled.footer`
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
     display: flex;
     justify-content: flex-end;
     background-color: var(--background-color);
