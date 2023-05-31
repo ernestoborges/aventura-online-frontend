@@ -1,23 +1,42 @@
 import styled from "styled-components"
 import { CustomForm, FormFieldSet, FormFooter, FormSection, FormStepNavButtons, StepButton } from "./Home"
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
 import { getNewCharacter } from "../../../../../features/newCharacter";
 import { useSelector } from "react-redux";
+import { getRaceList, getSubraceList } from "../../../../../features/dnd5eData/dnd5eData";
 
 
 
 export function RaceStep() {
     const newCharacterData = useSelector(getNewCharacter);
+    const raceList = useSelector(getRaceList);
+    const subraceList = useSelector(getSubraceList);
 
     return (
         <>
             <FormSection>
                 <CustomForm>
                     <FormFieldSet>
-                        {newCharacterData.name}
-                        {newCharacterData.avatar_file && newCharacterData.avatar_file.name}
+                        {
+                            raceList.map((race, index) =>
+                                <div key={index}>
+                                    {race.name}
+                                    {
+                                        race.subraces.length > 0 &&
+                                        subraceList
+                                            .filter((subrace) => race.index === subrace.race.index)
+                                            .map((subrace, index) =>
+                                                <div key={index}>
+                                                    <p>{subrace.name}</p>
+                                                    <p>{subrace.desc}</p>
+                                                </div>
+                                            )
 
+                                    }
+                                </div>
+                            )
+                        }
+                       
                     </FormFieldSet>
                     <FormFooter>
                         <FormStepNavButtons>

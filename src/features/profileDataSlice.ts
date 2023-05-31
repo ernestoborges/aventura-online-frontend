@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../app/store';
 
 
-interface ProfileState {
+interface IProfileData {
     data: {
         avatar_url: string
         username: string
@@ -12,7 +12,7 @@ interface ProfileState {
     } | null
 }
 
-const initialState: ProfileState = {
+const initialState: IProfileData = {
     data: null,
 };
 

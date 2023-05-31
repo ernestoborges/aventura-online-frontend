@@ -2,12 +2,12 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { RootState } from '../app/store';
 
 
-interface AuthState {
+interface IAuth {
     accessToken: string
     isLoggedIn: boolean
 }
 
-const initialState: AuthState = {
+const initialState: IAuth = {
     accessToken: "",
     isLoggedIn: false,
 };

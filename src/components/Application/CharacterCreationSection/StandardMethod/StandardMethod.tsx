@@ -1,6 +1,10 @@
 import ScrollContainer from "react-indiana-drag-scroll"
 import styled from "styled-components"
 import { Outlet, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setDndApiRaceData, setDndApiSubraceData } from "../../../../features/dnd5eData/dnd5eData";
 
 const formSteps = [
     { order: 1, route: "/app/builder/standard/", name: "inicio" },
@@ -19,7 +23,12 @@ export interface CreationFormInputs {
 
 export function StandardMethod() {
 
+    const [isLoading, setIsLoading] = useState(true);
+
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const dndApiUrl = "https://www.dnd5eapi.co";
 
     const getLinkClassName = (path: string) => {
         return (
@@ -27,32 +36,71 @@ export function StandardMethod() {
         );
     }
 
+    async function fetchDndApiData() {
+        setIsLoading(true);
+        try {
+            const racesResponse = await axios.get(`${dndApiUrl}/api/races`)
+            const subracesResponse = await axios.get(`${dndApiUrl}/api/subraces`)
+
+            const [racesResponseResults, subracesResponseResults] = await Promise.all([racesResponse, subracesResponse]);
+
+            const allRaces = racesResponseResults.data.results;
+            const allSubraces = subracesResponseResults.data.results;
+
+            const racesPromises = allRaces.map((race: { url: string }) => axios.get(`${dndApiUrl}${race.url}`));
+            const subracesPromises = allSubraces.map((subrace: { url: string }) => axios.get(`${dndApiUrl}${subrace.url}`));
+
+            const raceResponses = await Promise.all(racesPromises);
+            const subraceResponses = await Promise.all(subracesPromises);
+
+            const allRacesData = raceResponses.map((response: { data: any }) => response.data);
+            const allSubracesData = subraceResponses.map((response: { data: any }) => response.data);
+        
+            dispatch(setDndApiRaceData(allRacesData));
+            dispatch(setDndApiSubraceData(allSubracesData));
+            
+            setIsLoading(false);
+
+        } catch (err) {
+            console.error('Erro ao obter dados da dnd5eapi:', err);
+        }
+    }
+
+    useEffect(() => {
+        fetchDndApiData()
+    }, [])
+
     return (
         <>
-            <Container>
-                <Header>
-                    <h2>Criação de personagem</h2>
-                    <nav>
-                        <NavigationList>
-                            {
-                                formSteps.map(step =>
-                                    <div
-                                        key={step.order}
-                                        className={getLinkClassName(step.route)}
-                                        onClick={() => navigate(step.route)}
-                                    >
-                                        {
-                                            step.name
-                                        }
-                                    </div>
-                                )
-                            }
-                        </NavigationList>
-                    </nav>
-                </Header>
-                <Outlet />
-                
-            </Container>
+            {
+                isLoading
+                    ? "Carregando..."
+                    :
+                    <Container>
+                        <Header>
+                            <h2>Criação de personagem</h2>
+                            <nav>
+                                <NavigationList>
+                                    {
+                                        formSteps.map(step =>
+                                            <div
+                                                key={step.order}
+                                                className={getLinkClassName(step.route)}
+                                                onClick={() => navigate(step.route)}
+                                            >
+                                                {
+                                                    step.name
+                                                }
+                                            </div>
+                                        )
+                                    }
+                                </NavigationList>
+                            </nav>
+                        </Header>
+                        <Outlet />
+
+                    </Container>
+            }
         </>
     )
 }
