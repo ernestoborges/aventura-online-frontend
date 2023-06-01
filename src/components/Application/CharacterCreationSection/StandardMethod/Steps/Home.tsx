@@ -85,7 +85,6 @@ export function HomeStep() {
                                 <input type="text" {...register("name", { required: true })} />
                             </div>
                         </Label>
-
                     </FormFieldSet>
                     <FormFooter>
                         <FormStepNavButtons>
@@ -106,17 +105,16 @@ export const FormSection = styled.section`
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden;
 `
 
 export const CustomForm = styled.form`
-    position: relative;
     flex-grow: 1;
-    padding: 1rem 1rem;
     width: 100%;
+    height: 100%;
 
     display: flex;
     flex-direction: column;
-    gap: 2rem;
 
     @media (min-width: 776px) {
         max-width: 68rem;
@@ -128,6 +126,10 @@ export const FormFieldSet = styled.fieldset`
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    padding: 1rem 1rem;
+    
+    overflow: scroll;
 `
 
 const Label = styled.label`
@@ -189,9 +191,7 @@ const AvatarLabel = styled.div`
 `
 
 export const FormFooter = styled.footer`
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    
     width: 100%;
 
     display: flex;

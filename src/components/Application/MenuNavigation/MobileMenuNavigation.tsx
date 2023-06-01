@@ -102,14 +102,13 @@ export function MobileMenuNavigation() {
 }
 
 const Container = styled.nav`
+    order: 1;
+
     background-color: var(--background-color);
     width: 100%;
     height: 5.4rem;
 
     padding: 0.4rem 0.8rem;
-
-    position: fixed;
-    bottom: 0;
 
     & > ul {
         height: 100%;

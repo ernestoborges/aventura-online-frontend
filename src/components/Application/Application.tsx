@@ -69,10 +69,9 @@ export function Application() {
 const Container = styled.div`
     height: 100%;
     width: 100%;
-    position: relative;
 
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
 
     @media (min-width: 775px){
         flex-direction: row;
@@ -80,8 +79,9 @@ const Container = styled.div`
 `
 
 const AppContainer = styled.main`
-    height: 100%;
-    width: 100%;    
+    width: 100%;
+    flex-grow: 1;
+    max-height: 100%;
 
     display: flex;
     flex-direction: column;

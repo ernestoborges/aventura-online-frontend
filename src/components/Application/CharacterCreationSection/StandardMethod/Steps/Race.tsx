@@ -1,14 +1,12 @@
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import { CustomForm, FormFieldSet, FormFooter, FormSection, FormStepNavButtons, StepButton } from "./Home"
 import { Link } from "react-router-dom";
-import { getNewCharacter } from "../../../../../features/newCharacter";
 import { useSelector } from "react-redux";
 import { getRaceList, getSubraceList } from "../../../../../features/dnd5eData/dnd5eData";
 
 
 
 export function RaceStep() {
-    const newCharacterData = useSelector(getNewCharacter);
     const raceList = useSelector(getRaceList);
     const subraceList = useSelector(getSubraceList);
 
@@ -19,24 +17,30 @@ export function RaceStep() {
                     <FormFieldSet>
                         {
                             raceList.map((race, index) =>
-                                <div key={index}>
-                                    {race.name}
-                                    {
-                                        race.subraces.length > 0 &&
-                                        subraceList
-                                            .filter((subrace) => race.index === subrace.race.index)
-                                            .map((subrace, index) =>
-                                                <div key={index}>
-                                                    <p>{subrace.name}</p>
-                                                    <p>{subrace.desc}</p>
-                                                </div>
-                                            )
-
-                                    }
-                                </div>
+                                race.subraces.length > 0
+                                    ? <DropDown>
+                                        <img src={`/images/races/${race.index}.jpeg`} />
+                                        {race.name}
+                                        {
+                                            subraceList
+                                                .filter(subrace => race.index === subrace.race.index)
+                                                .map((subrace) =>
+                                                    <RadioLabel key={index}>
+                                                        <img src={`/images/races/${subrace.index}.jpeg`} />
+                                                        <input type="radio" name="selectedRace" value={race.index} />
+                                                        {subrace.name}
+                                                    </RadioLabel>
+                                                )
+                                        }
+                                    </DropDown>
+                                    : <RadioLabel key={index}>
+                                        <img src={`/images/races/${race.index}.jpeg`} />
+                                        <input type="radio" name="selectedRace" value={race.index} />
+                                        {race.name}
+                                    </RadioLabel>
                             )
                         }
-                       
+
                     </FormFieldSet>
                     <FormFooter>
                         <FormStepNavButtons>
@@ -62,4 +66,21 @@ const PreviousStep = styled(Link)`
     padding: 1rem;
     background-color: var(--background-color);
     color: var(--primary-text-color)
+`
+
+const RaceListItem = css`
+    border: 0.1rem solid var(--primary-text-color);
+`
+
+const RadioLabel = styled.label`
+    ${RaceListItem}
+    & input {
+        display: none;
+    }
+`
+
+const DropDown = styled.div`
+    ${RaceListItem}
+    display: flex;
+    flex-direction: column;
 `

@@ -98,7 +98,6 @@ export function StandardMethod() {
                             </nav>
                         </Header>
                         <Outlet />
-
                     </Container>
             }
         </>
@@ -106,7 +105,6 @@ export function StandardMethod() {
 }
 
 const Container = styled.div`
-    padding: 0 0 5.4rem;
     height: 100%;
     display: flex;
     flex-direction: column;
