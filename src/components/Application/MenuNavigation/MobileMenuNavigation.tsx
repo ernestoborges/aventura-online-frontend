@@ -1,9 +1,9 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom"
 import styled from "styled-components"
 import { getProfileData } from "../../../features/profileDataSlice";
-import { logout } from "../../../features/authSlice";
-import { axiosPrivate } from "../../../api/axios";
+// import { logout } from "../../../features/authSlice";
+// import { axiosPrivate } from "../../../api/axios";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { RiHomeLine } from "react-icons/ri"
@@ -19,30 +19,30 @@ const menuMainList = [
 
 export function MobileMenuNavigation() {
 
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+    // const navigate = useNavigate();
+    // const dispatch = useDispatch();
 
     const profileData = useSelector(getProfileData);
 
     const [selectedOption, setSelectedOption] = useState(1);
 
-    async function handleLogout() {
-        const controller = new AbortController();
-        try {
-            const response = await axiosPrivate.post('/logout', {
-                signal: controller.signal
-            });
+    // async function handleLogout() {
+    //     const controller = new AbortController();
+    //     try {
+    //         const response = await axiosPrivate.post('/logout', {
+    //             signal: controller.signal
+    //         });
 
-            if (response) {
-                dispatch(logout());
-                navigate("/");
-            }
+    //         if (response) {
+    //             dispatch(logout());
+    //             navigate("/");
+    //         }
 
-        } catch (err) {
-            console.error(err);
-            navigate('/login', { state: { from: location }, replace: true });
-        }
-    }
+    //     } catch (err) {
+    //         console.error(err);
+    //         navigate('/login', { state: { from: location }, replace: true });
+    //     }
+    // }
 
     return (
         <>

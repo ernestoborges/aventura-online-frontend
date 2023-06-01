@@ -129,7 +129,7 @@ export const FormFieldSet = styled.fieldset`
     height: 100%;
     padding: 1rem 1rem;
     
-    overflow: scroll;
+    overflow-y: scroll;
 `
 
 const Label = styled.label`

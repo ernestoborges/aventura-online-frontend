@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
-import { StandardMethod } from "./StandardMethod/StandardMethod"
 
 const buildMethods = [
     { order: 1, src: "standard", name: "Padrão", desc: "Criar um personagem passo-a-passo.", img: "/images/dnd5e-wallpaper-hd.jpg" },
