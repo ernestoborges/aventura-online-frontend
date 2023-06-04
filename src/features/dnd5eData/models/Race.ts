@@ -12,7 +12,7 @@ export interface IRace extends BaseData {
     starting_proficiencies: IProficiency[]
     starting_proficiency_options?: Choice
     languages: APIResource[]
-    languages_options?: Choice
+    language_options?: Choice
     language_desc: string
     traits: APIResource[]
     subraces: APIResource[]
