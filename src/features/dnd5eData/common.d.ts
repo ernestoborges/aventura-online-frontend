@@ -25,38 +25,52 @@ interface Choice {
     desc: string
     choose: number
     type: string
-    from: {
-        option_set_type: 'options_array' | 'equipment_category' | 'resource_list'
-        equipment_category: APIResource
-        resource_list: string
-        options: {
-            option_type: string
-            item: APIResource
-            action_name: string
-            count: number
-            type: 'melee' | 'ranged' | 'abilty' | 'magic'
-            // items:
-            // choice:
-            string: string
-            desc: string
-            alignments: APIResource[]
-            of: APIResource
-            ability_score: APIResource
-            minimum_score: number
-            bonus: number
-            name: string
-            dc: {
-                dc_type: APIResource
-                dc_value: number
-                success_type: string
-            }
-            damage: {
-                damage_dice: string
-                damage_type: APIResource
-            }[]
-        }[]
-    }
+    from: ChoiceFrom
     spell_options: Choice
+}
+
+interface ChoiceFrom {
+    option_set_type: 'options_array' | 'equipment_category' | 'resource_list'
+    equipment_category: APIResource
+    resource_list: string
+    options: ChoiceOptions[]
+}
+
+interface ChoiceOptions {
+    option_type: string
+    item: APIResource
+    action_name: string
+    count: number
+    type: 'melee' | 'ranged' | 'abilty' | 'magic'
+    // items:
+    choice: Choice
+    string: string
+    desc: string
+    alignments: APIResource[]
+    of: APIResource
+    ability_score: APIResource
+    minimum_score: number
+    bonus: number
+    name: string
+    dc: {
+        dc_type: APIResource
+        dc_value: number
+        success_type: string
+    }
+    damage: {
+        damage_dice: string
+        damage_type: APIResource
+    }[]
+}
+
+interface SpellCastingInfo {
+    name: string
+    desc: string[]
+}
+
+interface EquipmentStack {
+    equipment: APIResource
+    quantity: number
 }
 
 // dragonborn breath weapon sub-choices

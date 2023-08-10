@@ -4,7 +4,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setDndApiRacesData, setDndApiSubracesData, setDndApiTraitsData } from "../../../../features/dnd5eData/dnd5eData";
+import { setDndApiClassesData, setDndApiRacesData, setDndApiSubracesData, setDndApiTraitsData } from "../../../../features/dnd5eData/dnd5eData";
 
 const formSteps = [
     { order: 1, route: "/app/builder/standard/", name: "inicio" },
@@ -42,28 +42,34 @@ export function StandardMethod() {
             const racesResponse = await axios.get(`${dndApiUrl}/api/races`)
             const subracesResponse = await axios.get(`${dndApiUrl}/api/subraces`)
             const traitsResponse = await axios.get(`${dndApiUrl}/api/traits`)
+            const classesResponse = await axios.get(`${dndApiUrl}/api/classes`)
 
-            const [racesResponseResults, subracesResponseResults, traitsResponseResults] = await Promise.all([racesResponse, subracesResponse, traitsResponse]);
+            const [racesResponseResults, subracesResponseResults, traitsResponseResults, classesResponseResult] = await Promise.all([racesResponse, subracesResponse, traitsResponse, classesResponse]);
 
             const allRaces = racesResponseResults.data.results;
             const allSubraces = subracesResponseResults.data.results;
             const allTraits = traitsResponseResults.data.results;
+            const allClasses = classesResponseResult.data.results;
 
             const racesPromises = allRaces.map((race: { url: string }) => axios.get(`${dndApiUrl}${race.url}`));
             const subracesPromises = allSubraces.map((subrace: { url: string }) => axios.get(`${dndApiUrl}${subrace.url}`));
             const traitsPromises = allTraits.map((trait: { url: string }) => axios.get(`${dndApiUrl}${trait.url}`));
+            const classesPromises = allClasses.map((jobClass: { url: string }) => axios.get(`${dndApiUrl}${jobClass.url}`));
 
             const raceResponses = await Promise.all(racesPromises);
             const subraceResponses = await Promise.all(subracesPromises);
             const traitResponses = await Promise.all(traitsPromises);
+            const classResponses = await Promise.all(classesPromises);
 
             const allRacesData = raceResponses.map((response: { data: any }) => response.data);
             const allSubracesData = subraceResponses.map((response: { data: any }) => response.data);
             const allTraitsData = traitResponses.map((response: { data: any }) => response.data);
+            const allClassessData = classResponses.map((response: { data: any }) => response.data);
         
             dispatch(setDndApiRacesData(allRacesData));
             dispatch(setDndApiSubracesData(allSubracesData));
             dispatch(setDndApiTraitsData(allTraitsData));
+            dispatch(setDndApiClassesData(allClassessData));
             
             setIsLoading(false);
 

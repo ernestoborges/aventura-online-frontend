@@ -1,25 +1,38 @@
 import styled from "styled-components"
 import { CustomForm, FormFieldSet, FormFooter, FormSection, FormStepNavButtons, StepButton } from "./Home"
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { getRaceList, getSubraceList, getTraitList } from "../../../../../features/dnd5eData/dnd5eData";
 import { useEffect, useState } from "react";
 import { ISubrace } from "../../../../../features/dnd5eData/models/Subrace";
 import { ITrait } from "../../../../../features/dnd5eData/models/Trait";
+import { INewCharacter, getNewCharacter, setNewCharacter } from "../../../../../features/newCharacter";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 
 
 export function RaceStep() {
+
+    const newCharacterData = useSelector(getNewCharacter);
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
     const raceList = useSelector(getRaceList);
     const subraceList = useSelector(getSubraceList);
     const traitList = useSelector(getTraitList);
 
-    const [selectedRace, setSelectedRace] = useState(raceList[0])
+    const [selectedRace, setSelectedRace] = useState(raceList.find(race => race.index === newCharacterData.race) || raceList[0])
     const [selectedSubrace, setSelectedSubrace] = useState<ISubrace | null>(null);
 
     const [selectedRaceTrais, setSelectedRaceTraits] = useState<ITrait[]>([]);
     const [openedItems, setOpenedItems] = useState<string[]>([]);
 
+    const {
+        handleSubmit,
+    } = useForm({ defaultValues: {
+        ...newCharacterData,
+        race: "dragonborn"
+    }, mode: "onSubmit" });
 
     useEffect(() => {
         const raceTraits = selectedRace.traits.concat(selectedSubrace ? selectedSubrace.racial_traits : []);
@@ -30,7 +43,7 @@ export function RaceStep() {
 
     const handleTraitOptionSetType = (choice: Choice) => {
         switch (choice.from.option_set_type) {
-            case "options_array": return choice.from.options.map((option, index) => <option key={index}>{option.item.name}</option>)
+            case "options_array": return choice.from.options.map((option, index) => <option key={index} value={option.item.index}>{option.item.name}</option>)
             default: return
         }
     }
@@ -38,15 +51,20 @@ export function RaceStep() {
     const handleSpecificTraitOptionSetType = (choice: Choice) => {
         if (choice.spell_options)
             switch (choice.spell_options.from.option_set_type) {
-                case "options_array": return choice.spell_options.from.options.map((option, index) => <option key={index}>{option.item.name}</option>)
+                case "options_array": return choice.spell_options.from.options.map((option, index) => <option key={index} value={option.item.index}>{option.item.name}</option>)
                 default: return
             }
+    }
+
+    const onSubmit: SubmitHandler<INewCharacter> = (data) => {
+        dispatch(setNewCharacter({ ...newCharacterData, ...data }));
+        navigate("/app/builder/standard/class");
     }
 
     return (
         <>
             <FormSection>
-                <CustomForm>
+                <CustomForm onSubmit={handleSubmit(onSubmit)}>
                     <FormFieldSet>
                         <RaceSelectionContainer>
                             <SelectionLabel>
@@ -192,7 +210,7 @@ export function RaceStep() {
                             <PreviousStep to="/app/builder/standard/">
                                 Anterior
                             </PreviousStep>
-                            <StepButton>
+                            <StepButton type="submit">
                                 Próximo
                             </StepButton>
                         </FormStepNavButtons>
@@ -205,7 +223,7 @@ export function RaceStep() {
 
 
 
-const PreviousStep = styled(Link)`
+export const PreviousStep = styled(Link)`
                 font-size: 1.2rem;
                 border: 0;
                 padding: 1rem;
@@ -217,7 +235,7 @@ const RaceSelectionContainer = styled.div`
                 display: flex;
                 `
 
-const SelectionLabel = styled.label`
+export const SelectionLabel = styled.label`
 
                 `
 
@@ -245,7 +263,7 @@ const RacePreview = styled.div`
     }
                 `
 
-const RaceDetails = styled.div`
+export const RaceDetails = styled.div`
                 display: flex;
                 flex-direction: column;
                 gap: 1rem;
