@@ -73,6 +73,15 @@ interface EquipmentStack {
     quantity: number
 }
 
+interface Feature extends BaseData {
+    index: string
+    class: APIResource
+    subclass?: APIResource
+    desc: string[]
+    level: number
+    prerequisites?: []
+}
+
 // dragonborn breath weapon sub-choices
 
 // interface SubChoice extends Choice{

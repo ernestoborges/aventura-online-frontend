@@ -18,6 +18,7 @@ export function SelectionBox({
     return (
         <Container>
             {desc}
+            <p>Choose {choose}:</p>
             <OptionSetTypeSelector choose={choose} desc={desc} from={from} />
         </Container>
     )
@@ -108,7 +109,7 @@ function ChoiceOption({
                     // onChange={(e) => setSelected(!selected)}
                     // value={desc}
                     />
-                    {desc}
+                    {" "+desc}
                 </Label>
                 {/* {selected && <OptionsList from={from} name={name} />} */}
                 {isSelectedHandler(index) && <OptionSetTypeSelector choose={choose} desc={desc} type={type} from={from} />}
@@ -137,7 +138,7 @@ function CheckboxOption({
                     onClick={() => optionSelectionHandler(optionIndex)}
                     checked={isSelectedHandler(optionIndex)}
                 />
-                {name}
+                {name.split(":").length > 1 ? name.split(":")[1] : " "+name }
             </Label>
         </>
     )

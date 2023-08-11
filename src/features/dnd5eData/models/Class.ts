@@ -7,6 +7,7 @@ export interface IClass extends BaseData {
     class_levels: APIResource
     subclasses: APIResource[]
     spellcasting: APIResource
+    feature_list?: Feature[]
 }
 
 export interface SpellCastingData extends BaseData {

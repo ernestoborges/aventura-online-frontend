@@ -4,10 +4,11 @@ import { INewCharacter, getNewCharacter, setNewCharacter } from "../../../../../
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { PreviousStep, RaceDetails, SelectionLabel } from "./Race";
-import { getClassList } from "../../../../../features/dnd5eData/dnd5eData";
+import { getClassList, setDndApiClassesData } from "../../../../../features/dnd5eData/dnd5eData";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { SelectionBox } from "../../UsefullComponents/CheckboxList";
+import axios from "../../../../../api/axios";
 
 export function CharacterClass() {
 
@@ -17,10 +18,14 @@ export function CharacterClass() {
 
     const classList = useSelector(getClassList);
 
+    const dndApiUrl = "https://www.dnd5eapi.co";
+
     const [selectedClass, setSelectedClass] = useState(classList.find(characterClass => characterClass.index === newCharacterData.characterClass) || classList[0]);
     const [selectedProficienciesCount, setSelectedProficienciesCount] = useState<number[][]>(
         selectedClass.proficiency_choices.map(() => [0])
     );
+
+    const [featureList, setFeatureList] = useState<Feature[]>([]);
 
     const {
         handleSubmit,
@@ -35,6 +40,51 @@ export function CharacterClass() {
         navigate("race");
     }
 
+    const fetchFeatureList = async (className: string | number): Promise<Feature[]> => {
+        try {
+            const featuresResponse = await axios.get(`${dndApiUrl}/api/classes/${className}/features`)
+            const allFeatures = featuresResponse.data.results
+
+            const featurePromises = allFeatures.map((feature: { url: string }) => axios.get(`${dndApiUrl}${feature.url}`));
+            const featureResponses = await Promise.all(featurePromises);
+
+            const allFeaturesData = featureResponses.map((response: { data: any }) => response.data);
+
+            return allFeaturesData;
+        } catch (error) {
+            console.error('Erro ao obter dados da dnd5eapi:', error);
+            return [];
+        }
+    }
+
+    const handleClassSelection = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+
+        const foundClass = classList.find(characterClass => characterClass.index === e.target.value)
+        if (foundClass) {
+            setSelectedClass(foundClass)
+
+            if (!foundClass.feature_list) {
+                let fetchedFeatures: Feature[] = await fetchFeatureList(foundClass.index)
+                console.log(fetchedFeatures)
+
+                let newClassList = classList.map((jobClass) => {
+                    if (jobClass.index === foundClass.index) {
+                        return {
+                            ...jobClass,
+                            feature_list: fetchedFeatures
+                        }
+                    }
+                    return jobClass
+                })
+                setFeatureList(fetchedFeatures);
+                dispatch(setDndApiClassesData(newClassList));
+            } else {
+                setFeatureList(foundClass.feature_list)
+            }
+        }
+
+    }
+
     useEffect(() => {
         setSelectedProficienciesCount(
             selectedClass.proficiency_choices.map(() => [0])
@@ -42,34 +92,13 @@ export function CharacterClass() {
         console.log(selectedProficienciesCount);
     }, [selectedClass])
 
-
-    const handleCheckboxChange: (proficiencieIndex: number, optionIndex: number) => void = (proficiencieIndex, optionIndex) => {
-
-        setSelectedProficienciesCount(
-            selectedProficienciesCount.map((count, index) =>
-                index === proficiencieIndex
-                    ? selectedProficienciesCount[proficiencieIndex].includes(optionIndex)
-                        ? [...count.filter(value => value !== optionIndex)]
-                        : [...count, optionIndex]
-                    : [...count]
-            )
-        )
-    }
-
     return (
         <>
             <FormSection>
                 <CustomForm onSubmit={handleSubmit(onSubmit)}>
                     <FormFieldSet>
                         <SelectionLabel>
-                            <select
-                                onChange={(e) => {
-                                    const foundClass = classList.find(characterClass => characterClass.index === e.target.value)
-                                    if (foundClass) {
-                                        setSelectedClass(foundClass)
-                                    }
-                                }}
-                            >
+                            <select onChange={handleClassSelection}>
                                 {
                                     classList.map((characterClass, index) =>
                                         <option
@@ -122,9 +151,20 @@ export function CharacterClass() {
                                     {
                                         selectedClass.proficiency_choices.map((proficiencie, index) => (
                                             <li key={index}>
-                                                <p>Choose {proficiencie.choose}:</p>
                                                 {SelectionBox(proficiencie)}
                                             </li>
+                                        ))
+                                    }
+                                </ul>
+
+                            </div>
+                            <div>
+                                <h4>Features List</h4>
+                                <ul>
+                                    {
+                                        featureList &&
+                                        featureList.map((feature, index) => (
+                                            <li key={index}>{feature.name}</li>
                                         ))
                                     }
                                 </ul>
