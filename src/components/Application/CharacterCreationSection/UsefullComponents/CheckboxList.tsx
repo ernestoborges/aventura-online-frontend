@@ -1,65 +1,117 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components"
+
+interface IChoice extends Omit<Choice, 'type'> {
+    type?: string;
+}
+
+interface IAPIResource extends Omit<APIResource, 'url'>{
+    url?: string;
+}
 
 export function SelectionBox({
     choose,
     desc,
-    type,
     from
-}: Choice) {
+}: IChoice) {
 
     return (
         <Container>
             {desc}
-            {optionSetTypeHandler(from, desc)}
+            <OptionSetTypeSelector choose={choose} desc={desc} from={from} />
         </Container>
     )
 }
 
-function optionTypeHandler(option: ChoiceOptions, name: string) {
-    switch (option.option_type) {
-        case "choice": return ChoiceOption({ ...option.choice!, name });
-        case "reference": return CheckboxOption(option.item!);
-        default: break;
+function OptionSetTypeSelector({
+    choose,
+    desc,
+    from,
+}: IChoice) {
+
+    function setTypeHandler() {
+
+        switch (from.option_set_type) {
+            case "options_array": return <ArraySetType from={from} choose={choose} name={desc} />
+            case "equipment_category": return
+            case "resource_list": return
+            default: break;
+        }
     }
+
+    return (
+        <div>
+            {setTypeHandler()}
+        </div>
+    )
 }
 
-function optionSetTypeHandler(from: ChoiceFrom, name: string) {
-    const renderedOptions = from.options!.map(option => optionTypeHandler(option, name));
-    
-    switch (from.option_set_type) {
-        case "options_array":
-            return (
-                <OptionArrayContainer>
-                    {renderedOptions}
-                </OptionArrayContainer>
-            )
-        case "equipment_category": return
-        case "resource_list": return
-        default: break;
-    }
-}
+function ArraySetType({
+    from,
+    name,
+    choose
+}: { from: ChoiceFrom; name: string; choose: number }) {
 
+    const [selectedOptionsList, setSelectedOptionsList] = useState<number[]>([])
+
+    function optionSelectionHandler(index: number) {
+        let newList = [...selectedOptionsList]
+        if (selectedOptionsList.length >= choose) {
+            newList.shift();
+
+        }
+        newList.push(index);
+        setSelectedOptionsList(newList);
+    }
+
+    function isSelectedHandler(index: number) {
+        return selectedOptionsList.includes(index)
+    }
+
+    function optionTypeHandler(option: ChoiceOptions, name: string, index: number) {
+        switch (option.option_type) {
+            case "choice": return <ChoiceOption key={index} {...option.choice} name={name} index={index} optionSelectionHandler={optionSelectionHandler} isSelectedHandler={isSelectedHandler} />
+            case "reference": return <CheckboxOption key={index} {...option.item!} optionIndex={index} optionName={name} optionSelectionHandler={optionSelectionHandler} isSelectedHandler={isSelectedHandler} />;
+            default: break;
+        }
+    }
+
+    return (
+        <OptionsArrayContainer>
+            {from.options!.map((option, index) => (
+                optionTypeHandler(option, name, index)
+            ))}
+        </OptionsArrayContainer>
+    )
+}
 
 function ChoiceOption({
     choose,
     desc,
     type,
     from,
-    name
-}: Choice & { name: string }): JSX.Element {
+    name,
+    index,
+    optionSelectionHandler,
+    isSelectedHandler
+}: Choice & { name: string; index: number; optionSelectionHandler: (index: number) => void; isSelectedHandler: (index: number) => boolean }): JSX.Element {
 
     return (
         <>
-            <ChoiceContainer key={desc}>
+            <ChoiceContainer>
                 <Label>
                     <input
-                        type="radio"
+                        type="checkbox"
                         name={name}
+                        onClick={() => optionSelectionHandler(index)}
+                        checked={isSelectedHandler(index)}
+                    // onChange={(e) => setSelected(!selected)}
+                    // value={desc}
                     />
                     {desc}
                 </Label>
-                {optionSetTypeHandler(from, desc)}
+                {/* {selected && <OptionsList from={from} name={name} />} */}
+                {isSelectedHandler(index) && <OptionSetTypeSelector choose={choose} desc={desc} type={type} from={from} />}
             </ChoiceContainer>
         </>
     )
@@ -69,14 +121,21 @@ function ChoiceOption({
 function CheckboxOption({
     index,
     name,
-    url
-}: APIResource) {
+    optionName,
+    optionIndex,
+    optionSelectionHandler,
+    isSelectedHandler
+}: IAPIResource & { optionName: string; optionIndex: number; optionSelectionHandler: (index: number) => void; isSelectedHandler: (index: number) => boolean }) {
 
     return (
         <>
             <Label>
                 <input
                     type="checkbox"
+                    name={optionName}
+                    value={index}
+                    onClick={() => optionSelectionHandler(optionIndex)}
+                    checked={isSelectedHandler(optionIndex)}
                 />
                 {name}
             </Label>
@@ -98,7 +157,7 @@ const ChoiceContainer = styled.div`
     flex-direction: column;
 `
 
-const OptionArrayContainer = styled.div`
+const OptionsArrayContainer = styled.div`
     display: flex;
     flex-direction: column;
     padding: 1rem;

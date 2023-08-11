@@ -26,7 +26,7 @@ interface Choice {
     choose: number
     type: string
     from: ChoiceFrom
-    spell_options: Choice
+    spell_options?: Choice
 }
 
 interface ChoiceFrom {
